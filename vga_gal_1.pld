@@ -1,0 +1,33 @@
+Name     VGAcountSR;
+PartNo   00 ;
+Date     12.8.2021 ;
+Revision 01 ;
+Designer Engineer ;
+Company  Nema ;
+Assembly None ;
+Location  ;
+Device   g16v8 ;
+
+/* *************** INPUT PINS *********************/
+PIN [1..9] = [C1..9];
+
+
+/* *************** OUTPUT PINS *********************/
+PIN 13    = hvisArea   	; /* horizontal visible area output (when they're 200)   */ 
+PIN 14    = hfPorch    	; /* horizontal front porch output (when they're 210)    */ 
+PIN 15    = hbPorch    	; /* horizontal back porch output (when they're 242)     */ 
+PIN 16    = hwholeLine 	; /* horizontal whole line output (when they're 264)     */ 
+PIN 17	  = !resetCounters ;
+
+visAreaEquation 	= !C1 & !C2 & !C3 & C4 & !C5 & !C6 & C7 & C8;
+hfPorchEquation 	= !C1 & C2 & !C3 & !C4 & C5 & !C6 & C7 & C8;
+hbPorchEquation 	= !C1 & C2 & !C3 & !C4 & C5 & C6 & C7 & C8;
+hwholeLineEquation	= !C2 & !C3 & C4 & !C5 & !C6 & !C7 & !C8 & C9;
+
+hvisArea = !(hwholeLine # hwholeLineEquation);
+hwholeLine = !(hvisArea # visAreaEquation);
+
+hfPorch = !(hbPorch # hbPorchEquation);
+hbPorch = !(hfPorch # hfPorchEquation);
+
+resetCounters = hwholeLineEquation;
