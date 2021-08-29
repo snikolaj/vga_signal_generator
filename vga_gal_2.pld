@@ -1,0 +1,36 @@
+Name     VGAcountSR2;
+PartNo   00 ;
+Date     12.8.2021 ;
+Revision 01 ;
+Designer Engineer ;
+Company  Nema ;
+Assembly None ;
+Location  ;
+Device   g16v8 ;
+
+/* *************** INPUT PINS *********************/
+PIN [1..9] = [C1..9];
+PIN 11	    = C10;
+
+/* *************** OUTPUT PINS *********************/
+PIN 13    = vvisArea   	; /* vertical visible area output (when they're 600)     */
+PIN 14    = vfPorch    	; /* vertical front porch output (when they're 601)      */ 
+PIN 15    = vsyncPulse 	; /* vertical sync pulse output (when they're 605)       */ 
+PIN 16    = vbPorch    	; /* vertical back porch output (when they're 628)       */
+PIN 17	  = !resetCounters	;
+
+
+vvisAreaEquation 	= !C1 & !C2 & !C3 & C4 & C5 & !C6 & C7 & C10 ;  /* for vertical counters */
+vfPorchEquation 	= C1 & !C2 & !C3 & C4 & C5 & !C6 & C7 & C10 ;
+vsyncPulseEquation 	= C1 & !C2 & C3 & C4 & C5 & !C6 & C7 & C10 ;  /* it's case sensitive, don't make my mistakes! */
+vbPorchEquation 	= !C1 & !C2 & C3 & !C4 & C5 & C6 & C7 & C10 ; 
+
+
+
+vvisArea = !(vbPorch # vbPorchEquation);
+vbPorch = !(vvisArea # vvisAreaEquation);
+
+vfPorch    = !(vsyncPulse # vsyncPulseEquation);
+vsyncPulse = !(vfPorch    # vfPorchEquation);
+
+resetCounters = vbPorchEquation;
